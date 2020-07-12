@@ -1,26 +1,39 @@
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.TreeVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Inspect {
     public String Anonymous_Method;
-    public String original;
-    public int valid = 0;
-    public int valid_total = 0;
+    public String Original;
+    public String Original_Prediction;
+    public int UnequalToPrediction = 0;
+    public int UnequalToName = 0;
+    public int Total = 0;
 
-    public Inspect(String s) {
-        Anonymous_Method = s;
+    public Inspect(String Method_Str) {
+        Anonymous_Method = Method_Str;
     }
 
-    public void cutAST() {
+    public void ASTMutate() {
         CompilationUnit cu = StaticJavaParser.parse("class X {" + Anonymous_Method + "}");
 
-//        System.out.println(cu);
-        Predict pre = new Predict(cu.toString());
+        List<String> methodNames = new ArrayList<>();
+        VoidVisitor<List<String>> methodNameCollector = new MethodNameCollector();
+        methodNameCollector.visit(cu, methodNames);
+        Original = methodNames.get(0);
+        System.out.println(Original);
+
+        Predict predict = new Predict(cu.toString());
         try {
-            pre.pred();
-            original = pre.result;
+            predict.pred();
+            Original_Prediction = predict.Result;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,24 +42,39 @@ public class Inspect {
             @Override
             public void process(Node node) {
                 String stmt = node.getMetaModel().toString();
-                if(stmt.equals("ForStmt") || stmt.equals("IfStmt")) {
+                if (stmt.equals("ForStmt") || stmt.equals("IfStmt")) {
                     node.remove();
-                    System.out.println(cu);
+
                     Predict p = new Predict(cu.toString());
                     try {
                         p.pred();
-                        if(!p.result.equals(original)) {
-                            ++valid;
+                        if (!p.Result.equals(Original_Prediction)) {
+                            ++UnequalToPrediction;
+                        }
+                        if (!p.Result.equals(Original)) {
+                            ++UnequalToName;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-//                    System.out.println(p.result.csv);
-                    ++valid_total;
+                    ++Total;
                 }
             }
         };
+
+        visitor.visitBreadthFirst(cu);
+        visitor.visitLeavesFirst(cu);
         visitor.visitPostOrder(cu);
+        visitor.visitPreOrder(cu);
+    }
+
+    private static class MethodNameCollector extends VoidVisitorAdapter<List<String>> {
+
+        @Override
+        public void visit(MethodDeclaration md, List<String> collector) {
+            super.visit(md, collector);
+            collector.add(md.getNameAsString());
+        }
     }
 }
