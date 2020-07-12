@@ -10,7 +10,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 
 public class DataLoader {
-    public static void load() {
+    String Result_File = "src/data/result.csv";
+
+    public void load() {
         try {
             BufferedReader br = new BufferedReader(new FileReader("src/data/functions_copy.json"));
             String thisLine;
@@ -24,7 +26,7 @@ public class DataLoader {
                     System.out.println(jsonObject);
 
                     try {
-                        FileWriter myWriter = new FileWriter("src/data/result.csv");
+                        FileWriter myWriter = new FileWriter(Result_File);
                         myWriter.write(
                                 "Key,OriginalName,OriginalPrediction,UnequalToName,UnequalToPrediction,Total");
                         myWriter.close();
@@ -43,7 +45,7 @@ public class DataLoader {
                                 inspect.Original_Prediction + "," + inspect.UnequalToName + "," +
                                 inspect.UnequalToPrediction + "," + inspect.Total;
                         Files.write(
-                                Paths.get("src/data/result.csv"),
+                                Paths.get(Result_File),
                                 contentToAppend.getBytes(),
                                 StandardOpenOption.APPEND);
                     }
