@@ -27,7 +27,7 @@ public class Inspect {
         List<String> methodNames = new ArrayList<>();
         VoidVisitor<List<String>> methodNameCollector = new MethodNameCollector();
         methodNameCollector.visit(cu, methodNames);
-        Original = methodNames.get(0);
+        Original = methodNames.isEmpty() ? "" : methodNames.get(0);
 
         Predict predict = new Predict(cu.toString());
         try {
