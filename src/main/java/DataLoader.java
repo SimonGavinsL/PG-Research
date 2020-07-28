@@ -9,28 +9,7 @@ import java.util.Iterator;
 
 public class DataLoader {
     Path Result_File = Paths.get("src/data/result2.csv");
-    Path Source_File = Paths.get("src/data/functions.json");
-
-    void processLine(String line) throws IOException {
-        JSONObject jsonObject = new JSONObject("{" + line + "}");
-        System.out.println(jsonObject);
-
-        Iterator<String> keys = jsonObject.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
-
-            Inspect inspect = new Inspect(jsonObject.getString(key));
-            inspect.ASTMutate();
-
-            String contentToAppend = "\n" + key + "," + inspect.Original + "," +
-                    inspect.Original_Prediction + "," + inspect.UnequalToName + "," +
-                    inspect.UnequalToPrediction + "," + inspect.Total;
-            Files.write(
-                    Result_File,
-                    contentToAppend.getBytes(),
-                    StandardOpenOption.APPEND);
-        }
-    }
+    Path Source_File = Paths.get("src/data/functions_copy.json");
 
     public void load() {
         try {
@@ -43,10 +22,27 @@ public class DataLoader {
                 Files.lines(Source_File)
                         .filter(line -> line.length() > 5)
                         .forEach(line -> {
-                            try {
-                                processLine(line);
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            JSONObject jsonObject = new JSONObject("{" + line + "}");
+                            System.out.println(jsonObject);
+
+                            Iterator<String> keys = jsonObject.keys();
+                            while (keys.hasNext()) {
+                                String key = keys.next();
+
+                                Inspect inspect = new Inspect(jsonObject.getString(key));
+                                inspect.ASTMutate();
+
+                                String contentToAppend = "\n" + key + "," + inspect.Original + "," +
+                                        inspect.Original_Prediction + "," + inspect.UnequalToName + "," +
+                                        inspect.UnequalToPrediction + "," + inspect.Total;
+                                try {
+                                    Files.write(
+                                            Result_File,
+                                            contentToAppend.getBytes(),
+                                            StandardOpenOption.APPEND);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         });
             } catch (IOException e) {
