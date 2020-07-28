@@ -24,7 +24,7 @@ public class Predict {
             httpPost.setEntity(new StringEntity(Payload));
 
             try (CloseableHttpResponse response2 = httpclient.execute(httpPost)) {
-                System.out.println(response2.getStatusLine());
+//                System.out.println(response2.getStatusLine());
                 HttpEntity entity2 = response2.getEntity();
 
                 // do something useful with the response body
@@ -39,8 +39,7 @@ public class Predict {
                     if (i > 0) {
                         NameSec = NameSec.substring(0, 1).toUpperCase() + NameSec.substring(1);
                     }
-                    Result = Result + NameSec;
-                    System.out.println(Result);
+                    Result = Result.concat(NameSec);
                 }
 
                 EntityUtils.consume(entity2);

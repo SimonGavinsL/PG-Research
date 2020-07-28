@@ -28,7 +28,6 @@ public class Inspect {
         VoidVisitor<List<String>> methodNameCollector = new MethodNameCollector();
         methodNameCollector.visit(cu, methodNames);
         Original = methodNames.get(0);
-        System.out.println(Original);
 
         Predict predict = new Predict(cu.toString());
         try {
