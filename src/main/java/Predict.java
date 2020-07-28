@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 public class Predict {
     public String Payload;
-    public String Result;
+    public String Result = "";
     public boolean isValid = true;
 
     public Predict(String payload) {
@@ -33,9 +33,15 @@ public class Predict {
                 JSONObject js = (JSONObject) j.get("0");
                 JSONArray jso = (JSONArray) js.get("predictions");
                 JSONObject json = jso.getJSONObject(0);
-
-                // TODO: need to convert to plain string
-                Result = json.get("name").toString();
+                JSONArray jsonn = (JSONArray) json.get("name");
+                for (int i = 0; i < jsonn.length(); ++i) {
+                    String NameSec = jsonn.getString(i);
+                    if (i > 0) {
+                        NameSec = NameSec.substring(0, 1).toUpperCase() + NameSec.substring(1);
+                    }
+                    Result = Result + NameSec;
+                    System.out.println(Result);
+                }
 
                 EntityUtils.consume(entity2);
             } catch (HttpResponseException e) {

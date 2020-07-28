@@ -10,7 +10,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 
 public class DataLoader {
-    String Result_File = "src/data/result.csv";
+    String Result_File = "src/data/result2.csv";
 
     public void load() {
         try {
