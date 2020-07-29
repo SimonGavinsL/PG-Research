@@ -8,8 +8,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 
 public class DataLoader {
-    Path Result_File = Paths.get("src/data/result2.csv");
-    Path Source_File = Paths.get("src/data/functions_copy.json");
+    Path Result_File = Paths.get("src/data/result3.csv");
+    Path Source_File = Paths.get("src/data/functions.json");
 
     public void load() {
         try {
@@ -29,8 +29,12 @@ public class DataLoader {
                             while (keys.hasNext()) {
                                 String key = keys.next();
 
-                                Inspect inspect = new Inspect(jsonObject.getString(key));
-                                inspect.ASTMutate();
+                                Inspect inspect = new Inspect(key, jsonObject.getString(key));
+                                try {
+                                    inspect.ASTMutate();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
 
                                 String contentToAppend = "\n" + key + "," + inspect.Original + "," +
                                         inspect.Original_Prediction + "," + inspect.UnequalToName + "," +
