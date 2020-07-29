@@ -38,12 +38,8 @@ public class Inspect {
             Original = methodNames.isEmpty() ? "" : methodNames.get(0);
 
             Predict predict = new Predict(cu.toString());
-            try {
-                predict.pred();
-                Original_Prediction = predict.Result;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            predict.pred();
+            Original_Prediction = predict.Result;
 
             TreeVisitor visitor = new TreeVisitor() {
                 @Override
